@@ -29,6 +29,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;900&display=swap" rel="stylesheet">
     <style>
+        /* Принудительный скроллбар решает проблему смещения шапки влево/вправо */
+        html { overflow-y: scroll; } 
+        
         body { font-family: 'Montserrat', sans-serif; }
         h1, h2, h3, .font-black { font-weight: 900; }
         .font-light { font-weight: 300; }
@@ -39,10 +42,11 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        body.page-exit { animation: fadeOut 0.3s ease-in forwards; pointer-events: none; }
+        /* Исчезает только контент, чтобы шапка не дергалась вверх */
+        .page-exit { animation: fadeOut 0.3s ease-in forwards; pointer-events: none; }
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 0; transform: translateY(-10px); }
         }
 
         .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
@@ -105,30 +109,25 @@
 
 
     <main class="flex-grow flex flex-col items-center px-4 py-16 w-full max-w-6xl mx-auto page-transition">
-        
         <div class="text-center mb-16 fade-up">
             <h1 class="text-4xl md:text-6xl font-black mb-6">BMP - Metro Project</h1>
             <p class="max-w-3xl mx-auto text-gray-600 dark:text-gray-400 leading-relaxed transition-colors">
                 Игра про выдуманную систему метрополитена в выдуманном городе Берёзовецк, который находится в России. Игра находится в разработке, официальное открытие планируется летом 2027 года.
             </p>
         </div>
-
         <div class="w-full grid grid-cols-1 md:grid-cols-6 gap-6 fade-up" style="transition-delay: 0.1s;">
-            
             <a href="map" class="md:col-span-3 bg-white dark:bg-darkCard rounded-[2rem] p-8 shadow-sm metro-card group block border border-transparent dark:border-darkBorder transition-colors">
                 <h2 class="text-2xl font-black mb-6">Схема метро</h2>
                 <div class="w-full h-64 md:h-96 rounded-2xl overflow-hidden relative border-2 border-gray-100 dark:border-darkBorder group-hover:border-red-200 dark:group-hover:border-red-500 transition-colors bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
                     <img src="map-preview.png" alt="Схема метро Берёзовецка" class="w-full h-full object-cover object-center">
                 </div>
             </a>
-
             <div class="md:col-span-3 bg-white dark:bg-darkCard rounded-[2rem] border-2 border-gray-100 dark:border-darkBorder overflow-hidden shadow-sm flex flex-col metro-card h-auto md:h-auto min-h-[400px] transition-colors">
                 <div class="bg-gray-50 dark:bg-gray-800 py-5 px-8 border-b border-gray-100 dark:border-darkBorder transition-colors">
                     <h2 class="text-2xl font-black">Новости</h2>
                 </div>
                 <iframe src="https://docs.google.com/document/d/15yLtSBMNVcQbilHOL9pXFbUMtX61H4Y0a_M9yjrL5Rw/preview" class="w-full flex-grow border-0 min-h-[300px] dark:opacity-90"></iframe>
             </div>
-
             <a href="development" class="md:col-span-2 bg-white dark:bg-darkCard rounded-[2rem] p-8 shadow-sm metro-card flex flex-col justify-between group border border-transparent dark:border-darkBorder transition-colors">
                 <div>
                     <h2 class="text-xl font-black mb-4">Разработка</h2>
@@ -140,19 +139,17 @@
                     <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </a>
-
             <a href="vacancies" class="md:col-span-2 bg-white dark:bg-darkCard rounded-[2rem] p-8 shadow-sm metro-card flex flex-col justify-between group border border-transparent dark:border-darkBorder transition-colors">
                 <div>
                     <h2 class="text-xl font-black mb-4">Вакансии</h2>
                     <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-6">
-                        Станьте частью команды BMP. Мы ищем талантливых строителей, скриптеров и дизайнеров для реализации проекта.
+                        Станьте частью команды BMP. Мы ищем талантливых строителей и скриптеров для реализации проекта.
                     </p>
                 </div>
                 <div class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center self-end arrow-icon transition-all">
                     <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </a>
-
             <a href="links" class="md:col-span-2 bg-white dark:bg-darkCard rounded-[2rem] p-8 shadow-sm metro-card flex flex-col justify-between group border border-transparent dark:border-darkBorder transition-colors">
                 <div>
                     <h2 class="text-xl font-black mb-4">Ссылки</h2>
@@ -164,7 +161,6 @@
                     <svg class="w-4 h-4 text-gray-900 dark:text-white group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </div>
             </a>
-
         </div>
     </main>
         
@@ -240,13 +236,20 @@
         if(deskToggle) deskToggle.addEventListener('click', toggleTheme);
         if(mobToggle) mobToggle.addEventListener('click', toggleTheme);
 
-        // Скрипт плавного перехода между страницами
+        // Скрипт плавного перехода между страницами (с фиксацией шапки)
         document.querySelectorAll('a[href]').forEach(link => {
             link.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
                 if (href && !href.startsWith('http') && !href.startsWith('mailto') && this.target !== '_blank' && !href.startsWith('#')) {
                     e.preventDefault();
-                    document.body.classList.add('page-exit');
+                    
+                    const main = document.querySelector('main');
+                    const footer = document.querySelector('footer');
+                    
+                    // Анимируем исчезновение только контента и подвала, шапка остается!
+                    if (main) main.classList.add('page-exit');
+                    if (footer) footer.classList.add('page-exit');
+                    
                     setTimeout(() => {
                         window.location.href = href;
                     }, 300);
