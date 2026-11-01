@@ -1,138 +1,240 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="light">
 <head>
-    <link rel="icon" href="Plugin icon - 1.png" type="image/png">.
+    <link rel="icon" href="Plugin icon - 1.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Фотографии - BMP Metro Project</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b',
+                        darkBorder: '#334155'
+                    }
+                }
+            }
+        }
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', sans-serif; background-color: #f7f7f9; }
-        .font-black { font-weight: 900; }
+        body { font-family: 'Montserrat', sans-serif; }
+        h1, h2, h3, .font-black { font-weight: 900; }
         .font-light { font-weight: 300; }
         
+        /* Плавное появление при загрузке */
         .page-transition { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Плавное исчезновение при переходе по ссылке */
+        body.page-exit { animation: fadeOut 0.3s ease-in forwards; pointer-events: none; }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-15px); }
+        }
 
-        /* Анимации для модального окна (приближения) */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        
+        .doc-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .doc-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); border-color: #fca5a5; }
+        .metro-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .metro-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        .metro-card:hover .arrow-icon { transform: translateX(4px); background-color: #ef4444; color: white; }
+        
         .modal-fade-enter { opacity: 0; pointer-events: none; }
         .modal-fade-enter-active { opacity: 1; pointer-events: auto; transition: opacity 0.3s ease; }
         .modal-scale-enter { transform: scale(0.95); }
         .modal-scale-enter-active { transform: scale(1); transition: transform 0.3s ease; }
+        
     </style>
 </head>
-<body class="text-gray-900 flex flex-col min-h-screen">
+<body class="text-gray-900 bg-[#f7f7f9] dark:bg-darkBg dark:text-white flex flex-col min-h-screen transition-colors duration-300">
 
-    <header class="w-full bg-white flex justify-between items-center py-4 px-8 sticky top-0 z-50 border-b border-gray-100">
-        <a href="/" class="flex items-center gap-3 cursor-pointer">
+    <header class="w-full bg-white dark:bg-darkCard flex justify-between items-center py-4 px-8 sticky top-0 z-50 border-b border-gray-100 dark:border-darkBorder transition-colors duration-300">
+        <a href="index.html" class="flex items-center gap-3 cursor-pointer">
             <img src="Plugin icon - 1.png" alt="BMP Logo" class="w-10 h-10 rounded-full">
             <span class="font-black text-xl tracking-wide">BMP</span>
         </a>
         
         <!-- Десктопное меню -->
-        <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-700">
-            <a href="/" class="hover:text-red-500 transition-colors">Дом</a>
-            <a href="development" class="hover:text-red-500 transition-colors">Разработка</a>
-            <a href="map" class="hover:text-red-500 transition-colors">Маршруты</a>
+        <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700 dark:text-gray-300">
+            <a href="index.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Дом</a>
+            <a href="development.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Разработка</a>
+            <a href="map.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Маршруты</a>
             <div class="relative group cursor-pointer">
-                <span class="hover:text-red-500 transition-colors flex items-center gap-1">Работа <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
-                <div class="absolute left-0 mt-4 w-40 bg-white border border-gray-100 shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                    <a href="vacancies" class="block px-5 py-3 hover:bg-gray-50 rounded-xl hover:text-red-500">Вакансии</a>
+                <span class="hover:text-red-500 dark:hover:text-red-400 transition-colors flex items-center gap-1">Работа <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></span>
+                <div class="absolute left-0 mt-4 w-40 bg-white dark:bg-darkCard border border-gray-100 dark:border-darkBorder shadow-xl rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                    <a href="vacancies.html" class="block px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl hover:text-red-500 dark:hover:text-red-400">Вакансии</a>
                 </div>
             </div>
-            <a href="documents" class="hover:text-red-500 transition-colors">Документы</a>
-            <a href="links" class="hover:text-red-500 transition-colors">Ссылки</a>
-            <a href="team" class="hover:text-red-500 transition-colors">Команда</a>
-            <a href="photos" class="hover:text-red-500 transition-colors">Фотографии</a>
+            <a href="documents.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Документы</a>
+            <a href="links.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Ссылки</a>
+            <a href="team.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Команда</a>
+            <a href="photos.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Фотографии</a>
+            
+            <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2.5 transition-colors">
+                <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+            </button>
         </nav>
 
-        <!-- Кнопка-бургер для телефонов -->
-        <button id="mobile-btn" class="md:hidden text-gray-700 hover:text-red-500 focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
+        <div class="flex items-center gap-2 md:hidden">
+            <button id="theme-toggle-mobile" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2 transition-colors">
+                <svg id="theme-toggle-dark-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                <svg id="theme-toggle-light-icon-mobile" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+            </button>
+            <button id="mobile-btn" class="text-gray-700 dark:text-gray-300 hover:text-red-500 focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
 
-        <!-- ИСПРАВЛЕННОЕ скрытое мобильное меню (теперь внутри header) -->
-        <div id="mobile-menu" class="hidden flex md:hidden bg-white w-full border-b border-gray-100 flex-col items-center py-4 gap-4 text-sm font-medium text-gray-700 shadow-lg absolute top-full left-0 z-40">
-            <a href="/" class="hover:text-red-500 transition-colors">Дом</a>
-            <a href="development" class="hover:text-red-500 transition-colors">Разработка</a>
-            <a href="map" class="hover:text-red-500 transition-colors">Маршруты</a>
-            <a href="vacancies" class="hover:text-red-500 transition-colors">Вакансии (Работа)</a>
-            <a href="documents" class="hover:text-red-500 transition-colors">Документы</a>
-            <a href="links" class="hover:text-red-500 transition-colors">Ссылки</a>
-            <a href="team" class="hover:text-red-500 transition-colors">Команда</a>
-            <a href="photos" class="hover:text-red-500 transition-colors">Фотографии</a>
+        <div id="mobile-menu" class="hidden flex md:hidden bg-white dark:bg-darkCard w-full border-b border-gray-100 dark:border-darkBorder flex-col items-center py-4 gap-4 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-lg absolute top-full left-0 z-40 transition-colors">
+            <a href="index.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Дом</a>
+            <a href="development.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Разработка</a>
+            <a href="map.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Маршруты</a>
+            <a href="vacancies.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Вакансии (Работа)</a>
+            <a href="documents.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Документы</a>
+            <a href="links.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Ссылки</a>
+            <a href="team.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Команда</a>
+            <a href="photos.html" class="hover:text-red-500 dark:hover:text-red-400 transition-colors">Фотографии</a>
         </div>
     </header>
 
-    <!-- Скрытое мобильное меню -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white w-full border-b border-gray-100 flex flex-col items-center py-4 gap-4 text-sm font-medium text-gray-700 shadow-lg absolute z-40">
-        <a href="/" class="hover:text-red-500 transition-colors">Дом</a>
-        <a href="development" class="hover:text-red-500 transition-colors">Разработка</a>
-        <a href="map" class="hover:text-red-500 transition-colors">Маршруты</a>
-        <a href="vacancies" class="hover:text-red-500 transition-colors">Вакансии (Работа)</a>
-        <a href="documents" class="hover:text-red-500 transition-colors">Документы</a>
-        <a href="links" class="hover:text-red-500 transition-colors">Ссылки</a>
-        <a href="team" class="hover:text-red-500 transition-colors">Команда</a>
-        <a href="photos" class="hover:text-red-500 transition-colors">Фотографии</a>
-    </div>
 
     <main class="flex-grow flex flex-col items-center px-4 py-16 w-full max-w-5xl mx-auto page-transition">
-        
         <div class="text-center mb-10">
             <h1 class="text-4xl md:text-5xl font-black mb-4">Фотографии</h1>
-            <p class="max-w-2xl mx-auto text-gray-600 leading-relaxed">
+            <p class="max-w-2xl mx-auto text-gray-600 dark:text-gray-400 leading-relaxed transition-colors">
                 Кадры со станций и процесс строительства нашего метрополитена.
             </p>
         </div>
-        
-        <div class="w-full bg-white rounded-[2rem] shadow-sm p-6 md:p-10 flex flex-col gap-8">
-            
-            <!-- Добавлен класс gallery-img для скрипта -->
-            <img src="1.png" alt="Станция Институтская" class="gallery-img w-full h-auto rounded-xl border border-gray-100 shadow-sm hover:scale-[1.01] hover:shadow-md transition-all cursor-pointer">
-            <img src="2.png" alt="Навигация Ольховка" class="gallery-img w-full h-auto rounded-xl border border-gray-100 shadow-sm hover:scale-[1.01] hover:shadow-md transition-all cursor-pointer">
-            <img src="3.png" alt="Схема маршрутов на станции" class="gallery-img w-full h-auto rounded-xl border border-gray-100 shadow-sm hover:scale-[1.01] hover:shadow-md transition-all cursor-pointer">
-            
+        <div class="w-full bg-white dark:bg-darkCard rounded-[2rem] shadow-sm p-6 md:p-10 flex flex-col gap-8 transition-colors border border-transparent dark:border-darkBorder">
+            <img src="1.png" alt="Станция Институтская" class="gallery-img w-full h-auto rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm hover:scale-[1.01] hover:shadow-md transition-all cursor-pointer">
+            <img src="2.png" alt="Навигация Ольховка" class="gallery-img w-full h-auto rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm hover:scale-[1.01] hover:shadow-md transition-all cursor-pointer">
+            <img src="3.png" alt="Схема маршрутов на станции" class="gallery-img w-full h-auto rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm hover:scale-[1.01] hover:shadow-md transition-all cursor-pointer">
+            <img src="4.jpg" alt="Платформа станции и навигационный стенд" class="gallery-img w-full h-auto rounded-xl border border-gray-100 dark:border-darkBorder shadow-sm hover:scale-[1.01] hover:shadow-md transition-all cursor-pointer">
         </div>
-        
     </main>
-
-    <!-- Темный фон и окно для увеличенной картинки -->
     <div id="imageModal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex justify-center items-center modal-fade-enter hidden">
-        
-        <!-- Тот самый крестик -->
-        <button id="closeModalBtn" class="absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 bg-white text-gray-900 border-2 border-gray-100 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white hover:border-red-500 hover:scale-105 transition-all shadow-lg z-50">
+        <button id="closeModalBtn" class="absolute top-6 right-6 md:top-10 md:right-10 w-12 h-12 bg-white dark:bg-darkCard text-gray-900 dark:text-white border-2 border-gray-100 dark:border-darkBorder rounded-xl flex items-center justify-center hover:bg-red-500 dark:hover:bg-red-500 hover:text-white hover:border-red-500 dark:hover:border-red-500 hover:scale-105 transition-all shadow-lg z-50">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-
         <img id="modalImg" src="" alt="Увеличенное фото" class="max-w-[90%] max-h-[90vh] rounded-2xl shadow-2xl object-contain modal-scale-enter">
     </div>
 
-    <footer class="w-full bg-white border-t border-gray-100 py-6 px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 mt-auto">
-        <div class="font-light text-sm tracking-wide text-gray-500 uppercase">BMP METRO PROJECT 2026</div>
+    <footer class="w-full bg-white dark:bg-darkCard border-t border-gray-100 dark:border-darkBorder py-6 px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 transition-colors mt-auto">
+        <div class="font-light text-sm tracking-wide text-gray-500 dark:text-gray-400 uppercase">BMP METRO PROJECT 2026</div>
         <div class="text-sm">
-            <span class="font-light text-gray-500">Контакты:</span> 
-            <a href="mailto:workerowerk@gmail.com" class="font-bold text-gray-900 hover:text-red-500 transition-colors ml-1">workerowerk@gmail.com</a>
+            <span class="font-light text-gray-500 dark:text-gray-400">Контакты:</span> 
+            <a href="mailto:workerowerk@gmail.com" class="font-bold text-gray-900 dark:text-white hover:text-red-500 dark:hover:text-red-400 transition-colors ml-1">workerowerk@gmail.com</a>
         </div>
     </footer>
 
-    <!-- Скрипт для работы приближения -->
+
+    <script>
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { 
+                    entry.target.classList.add('visible');
+                    obs.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        const btn = document.getElementById('mobile-btn');
+        const menu = document.getElementById('mobile-menu');
+        if(btn && menu) {
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+            });
+        }
+
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleDarkIconMobile = document.getElementById('theme-toggle-dark-icon-mobile');
+        const themeToggleLightIconMobile = document.getElementById('theme-toggle-light-icon-mobile');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if(themeToggleLightIcon) themeToggleLightIcon.classList.remove('hidden');
+            if(themeToggleLightIconMobile) themeToggleLightIconMobile.classList.remove('hidden');
+        } else {
+            if(themeToggleDarkIcon) themeToggleDarkIcon.classList.remove('hidden');
+            if(themeToggleDarkIconMobile) themeToggleDarkIconMobile.classList.remove('hidden');
+        }
+
+        function toggleTheme() {
+            if(themeToggleDarkIcon) themeToggleDarkIcon.classList.toggle('hidden');
+            if(themeToggleLightIcon) themeToggleLightIcon.classList.toggle('hidden');
+            if(themeToggleDarkIconMobile) themeToggleDarkIconMobile.classList.toggle('hidden');
+            if(themeToggleLightIconMobile) themeToggleLightIconMobile.classList.toggle('hidden');
+
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        }
+        
+        const deskToggle = document.getElementById('theme-toggle');
+        const mobToggle = document.getElementById('theme-toggle-mobile');
+        if(deskToggle) deskToggle.addEventListener('click', toggleTheme);
+        if(mobToggle) mobToggle.addEventListener('click', toggleTheme);
+
+        // Скрипт плавного перехода между страницами
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                // Перехватываем клик, если это внутренняя ссылка и не якорь
+                if (href && !href.startsWith('http') && !href.startsWith('mailto') && this.target !== '_blank' && !href.startsWith('#')) {
+                    e.preventDefault();
+                    document.body.classList.add('page-exit');
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 300); // Тайминг совпадает с fadeOut CSS
+                }
+            });
+        });
+    </script>
+
+
     <script>
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImg');
         const closeBtn = document.getElementById('closeModalBtn');
         const galleryImages = document.querySelectorAll('.gallery-img');
-
-        // Открытие картинки
+        
         galleryImages.forEach(img => {
             img.addEventListener('click', () => {
-                modalImg.src = img.src; // Берем путь кликнутой картинки
+                modalImg.src = img.src;
                 modal.classList.remove('hidden');
-                
-                // Небольшая задержка для запуска плавных анимаций
                 setTimeout(() => {
                     modal.classList.remove('modal-fade-enter');
                     modal.classList.add('modal-fade-enter-active');
@@ -141,36 +243,19 @@
                 }, 10);
             });
         });
-
-        // Функция закрытия окна
+        
         const closeModal = () => {
             modal.classList.remove('modal-fade-enter-active');
             modal.classList.add('modal-fade-enter');
             modalImg.classList.remove('modal-scale-enter-active');
             modalImg.classList.add('modal-scale-enter');
-            
-            // Прячем элемент полностью после окончания анимации
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
         };
-
-        // Закрываем по клику на крестик
-        closeBtn.addEventListener('click', closeModal);
-
-        // Закрываем по клику на темный фон (но не на саму картинку)
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
+        
+        if(closeBtn) closeBtn.addEventListener('click', closeModal);
+        if(modal) modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
         });
     </script>
-<script>
-        const btn = document.getElementById('mobile-btn');
-        const menu = document.getElementById('mobile-menu');
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
-    </script>
-    </body>
+</body>
 </html>
