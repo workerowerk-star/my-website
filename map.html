@@ -29,24 +29,25 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;900&display=swap" rel="stylesheet">
     <style>
-        /* Принудительный скроллбар решает проблему смещения шапки влево/вправо */
+        /* Принудительный скроллбар решает проблему смещения контента влево/вправо */
         html { overflow-y: scroll; } 
         
         body { font-family: 'Montserrat', sans-serif; }
         h1, h2, h3, .font-black { font-weight: 900; }
         .font-light { font-weight: 300; }
         
-        .page-transition { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Новая анимация "Shade" / Из дыма */
+        .page-transition { animation: smokeIn 0.8s ease-out forwards; }
+        @keyframes smokeIn {
+            from { opacity: 0; filter: blur(15px); }
+            to { opacity: 1; filter: blur(0); }
         }
         
-        /* Исчезает только контент, чтобы шапка не дергалась вверх */
-        .page-exit { animation: fadeOut 0.3s ease-in forwards; pointer-events: none; }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10px); }
+        /* Исчезновение в "дымку" */
+        .page-exit { animation: smokeOut 0.4s ease-in forwards; pointer-events: none; }
+        @keyframes smokeOut {
+            from { opacity: 1; filter: blur(0); }
+            to { opacity: 0; filter: blur(15px); }
         }
 
         .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
@@ -123,7 +124,7 @@
         </div>
     </main>
 
-    <footer class="w-full bg-white dark:bg-darkCard border-t border-gray-100 dark:border-darkBorder py-6 px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 transition-colors mt-auto">
+    <footer class="w-full bg-white dark:bg-darkCard border-t border-gray-100 dark:border-darkBorder py-6 px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 transition-colors mt-auto page-transition">
         <div class="font-light text-sm tracking-wide text-gray-500 dark:text-gray-400 uppercase">BMP METRO PROJECT 2026</div>
         <div class="text-sm">
             <span class="font-light text-gray-500 dark:text-gray-400">Контакты:</span> 
@@ -194,7 +195,7 @@
         if(deskToggle) deskToggle.addEventListener('click', toggleTheme);
         if(mobToggle) mobToggle.addEventListener('click', toggleTheme);
 
-        // Скрипт плавного перехода между страницами (с фиксацией шапки)
+        // Скрипт дымового перехода между страницами
         document.querySelectorAll('a[href]').forEach(link => {
             link.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
@@ -204,13 +205,13 @@
                     const main = document.querySelector('main');
                     const footer = document.querySelector('footer');
                     
-                    // Анимируем исчезновение только контента и подвала, шапка остается!
+                    // Шапка остается статичной, контент и подвал растворяются "в дымку"
                     if (main) main.classList.add('page-exit');
                     if (footer) footer.classList.add('page-exit');
                     
                     setTimeout(() => {
                         window.location.href = href;
-                    }, 300);
+                    }, 400); // Тайминг совпадает с анимацией smokeOut
                 }
             });
         });
