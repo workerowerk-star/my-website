@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проспект Новаторов - Фотографии</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .gallery-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 20px;
+            overflow-y: auto;
+        }
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            font-size: 2rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: transform 0.2s ease;
+            z-index: 100;
+        }
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+        .gallery-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .gallery-img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-btn">&#8592;</a>
+    
+    <div class="gallery-container">
+        <h1 class="title" style="margin-bottom: 50px; font-size: 3rem; white-space: normal; text-align: center;">Проспект Новаторов</h1>
+        
+        <div class="gallery-grid">
+            <img src="4.png" alt="Фото 4" class="gallery-img">
+            <img src="5.png" alt="Фото 5" class="gallery-img">
+            <img src="6.png" alt="Фото 6" class="gallery-img">
+        </div>
+    </div>
+</body>
+</html>
